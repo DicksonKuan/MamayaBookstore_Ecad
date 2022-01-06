@@ -48,6 +48,7 @@ function addItem() {
 	$stmt = $conn->prepare($qry);
 	$stmt->bind_param("ii", $_SESSION["Cart"], $pid); // ii - integer
 	$stmt->execute();
+	$result= $stmt->get_result();
 	$stmt->close();
 	$addNewItem = 0;
 	if ($result->num_rows>0){
