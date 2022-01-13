@@ -9,6 +9,9 @@
     $email = $_POST["email"];
     $password = $_POST["password"];
 
+    //Create password hash 
+    $password = password_hash($_POST["password"],PASSWORD_DEFAULT);
+
     //Include the PHP file that establishes database connections handle: $conn
     include_once("mysql_conn.php");
 

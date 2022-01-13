@@ -17,20 +17,29 @@ include_once("mysql_conn.php");
 $qry = "SELECT Password, Email, Name, ShopperID FROM Shopper WHERE Email = '$email'";
 $result = $conn->query($qry); //Execute the SQL and get the returned reuslts
 while($row = $result->fetch_array()){
-	if (($email == $row['Email']) && ($pwd == $row['Password'])) {
+	//Get Hashed password
+	$hashed_pwd = $row["Password"];
+	//Verifies if password matches the hash
+	if(password_verify($pwd, $hashed_pwd)== true){
+		$checklogin = true;
+		//Save user info
+		$_SESSION["ShopperName"] = $row["Name"];
+		$_SESSION["ShopperID"] = $row1["ShopperID"];	
+	}
+	if (($email == $row['Email']) && ($checklogin == true)) {
 		// Save user's info in session variables
 		$_SESSION["ShopperName"] = $row['Name'];
 		$_SESSION["ShopperID"] = $row["ShopperID"];
-		
+
 		// To Do 2 (Practical 4): Get active shopping cart
 		$qry = "SELECT ShopCartID FROM ShopCart WHERE ShopperID=? AND OrderPlaced=0";
 		$stmt = $conn->prepare($qry);
 		$stmt->bind_param("i", $row["ShopperID"]); // i -integer
 		$stmt->execute();
-		$result = $stmt->get_result();
+		$result= $stmt->get_result();
 		$stmt->close();
 		if ($result->num_rows > 0){
-			$row = $result->fetch_array();
+			
 			$_SESSION["Cart"] = $row['ShopCartID'];
 				
 			//Count number of uncheck items
